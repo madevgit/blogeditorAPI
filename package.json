@@ -8,7 +8,7 @@
     "start": "nodemon --config ./nodemon.json -r dotenv/config server.js"
   },
   "engines":{
-  "node":"14.17.5",
+  "node":"14.17.5"
   },
   "keywords": [],
   "author": "",
