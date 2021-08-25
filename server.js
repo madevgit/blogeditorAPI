@@ -35,7 +35,7 @@ Main(() => {
   Auth();
   publisher.route("/").get((req, res, next) => {
     res.json({
-      message: "welcome to publisher server",
+      message: "welcome to QOS publisher server",
     });
   });
   publisher.route("/register").post(
