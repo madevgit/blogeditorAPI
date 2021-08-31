@@ -7,8 +7,8 @@
     "test": "mocha",
     "start": "nodemon --config ./nodemon.json -r dotenv/config server.js"
   },
-  "engines":{
-  "node":"14.17.5"
+  "engines": {
+    "node": "14.17.5"
   },
   "keywords": [],
   "author": "",
