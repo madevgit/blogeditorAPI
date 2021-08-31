@@ -7,8 +7,8 @@
     "test": "mocha",
     "start": "nodemon --config ./nodemon.json -r dotenv/config server.js"
   },
-  "engines":{
-  "node":"14.17.5"
+  "engines": {
+    "node": "14.17.5"
   },
   "keywords": [],
   "author": "",
@@ -29,6 +29,7 @@
     "mongoose": "^5.10.10",
     "mongoose-validator": "^2.1.0",
     "multer": "^1.4.2",
+    "node-cron": "^3.0.0",
     "nodemailer": "^6.4.14",
     "nodemon": "^2.0.6",
     "passport": "^0.4.1",

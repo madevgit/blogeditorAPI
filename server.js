@@ -77,6 +77,7 @@ Main(() => {
     .delete(Post.delete)
     .put(Post.update);
   publisher.route("/suscribe").delete(Suscriber.delete).post(Suscriber.create);
+  publisher.route("/unsubscribe").all(Suscriber.delete);
   publisher.use((error, req, res, next) => {
     return res.status(500).json({ reason: error.message, type: error.name });
   });

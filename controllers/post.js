@@ -1,5 +1,6 @@
 const Post = require("../models/Post");
 const mongo = require("mongodb");
+const Subscriber = require("../models/Suscriber");
 const HttpError = require("../error/httpError");
 const PrettyError = require("../error/PrettyError");
 const mailSend = require("../mail/mailSender");
@@ -23,23 +24,44 @@ module.exports = {
       let { name, description } = PrettyError(error.errors.category.properties);
       return next(new HttpError(name, 500, description));
     }
-
-    mailSend({
-      to: "moukadimalassani@gmail.com",
-      from: "moukadim@qosic.com",
-      subject: "new Post",
-      template: "newsletter",
-      templateVars: {
-        mail: "moukadimalassani@gmail.com",
-      },
-      attachements: [
-        {
-          filename: "poster",
-          path: post.poster,
-          cid: "cid:unique",
+    let Subscribers = await Subscriber.find().catch(next);
+    let Num = await Subscriber.countDocuments().catch(next);
+    for (let i = 0; i < Num; i++) {
+      mailSend({
+        to: Subscribers[i].email,
+        from: process.env.SMTP_AUTH_USER,
+        subject: "new Post",
+        template: "index",
+        templateVars: {
+          title: post.title,
+          description: post.resume,
+          mail: Subscribers[i].email,
+          idPost: post._id,
         },
-      ],
-    });
+        attachments: [
+          {
+            filename: "logo.png",
+            path: "./mail/template/images/logo.png",
+            cid: "logo",
+          },
+          {
+            filename: "facebook.png",
+            path: "./mail/template/images/facebook.png",
+            cid: "facebook",
+          },
+          {
+            filename: "twitter.png",
+            path: "./mail/template/images/facebook.png",
+            cid: "twitter",
+          },
+          {
+            filename: "poster",
+            path: post.poster,
+            cid: "poster",
+          },
+        ],
+      });
+    }
     res.status(200).json({
       message: `${post.title} ${
         published ? "published" : "saved"
@@ -54,9 +76,9 @@ module.exports = {
     const offset = parseInt(req.query.skip, 10);
     const size = parseInt(req.query.limit, 10);
     const published = req.query.published === "true";
+
     const category =
       req.query.category === "undefined" ? false : req.query.category;
-    console.log(category, typeof category);
     try {
       if (Boolean(id)) {
         posts = await Post.aggregate([

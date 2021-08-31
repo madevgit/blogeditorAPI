@@ -16,7 +16,7 @@ module.exports = {
     let email = req.query.email;
     await Suscriber.findOneAndDelete({ email }).catch(next);
     res.status(200).json({
-      message: "Unsuscribe succesfull",
+      message: `${email} unsubscribe successfull`,
     });
   },
 };
