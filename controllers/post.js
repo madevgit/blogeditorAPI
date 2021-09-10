@@ -8,7 +8,8 @@ module.exports = {
   create: async (req, res, next) => {
     let { id } = req.query,
       post;
-    let { title, poster, resume, content, category, published } = req.body;
+    let { title, poster, resume, content, category, published, lang } =
+      req.body;
     try {
       let newPost = new Post({
         title,
@@ -16,12 +17,13 @@ module.exports = {
         resume,
         content,
         category,
+        lang,
         author: new mongo.ObjectId(id),
         published,
       });
       post = await newPost.save();
     } catch (error) {
-      let { name, description } = PrettyError(error.errors.category.properties);
+      let { name, description } = PrettyError(error.errors);
       return next(new HttpError(name, 500, description));
     }
     let Subscribers = await Subscriber.find().catch(next);
@@ -30,7 +32,7 @@ module.exports = {
       mailSend({
         to: Subscribers[i].email,
         from: process.env.SMTP_AUTH_USER,
-        subject: "new Post",
+        subject: post.title,
         template: "index",
         templateVars: {
           title: post.title,
@@ -69,6 +71,7 @@ module.exports = {
       post: post,
     });
   },
+
   read: async (req, res, next) => {
     let { id } = req.query,
       number,
@@ -76,9 +79,10 @@ module.exports = {
     const offset = parseInt(req.query.skip, 10);
     const size = parseInt(req.query.limit, 10);
     const published = req.query.published === "true";
-
+    const lang = req.query.lang;
     const category =
       req.query.category === "undefined" ? false : req.query.category;
+
     try {
       if (Boolean(id)) {
         posts = await Post.aggregate([
@@ -93,22 +97,21 @@ module.exports = {
           published,
         });
       } else {
-        console.log(Boolean(category));
         if (Boolean(category)) {
           posts = await Post.aggregate([
-            { $match: { published, category } },
+            { $match: { published, category, lang } },
             { $sort: { createdAt: -1 } },
             { $skip: offset },
             { $limit: size },
           ]);
-
           number = await Post.countDocuments({
             published,
             category,
+            lang,
           });
         } else {
           posts = await Post.aggregate([
-            { $match: { published } },
+            { $match: { published, lang } },
             { $sort: { createdAt: -1 } },
             { $skip: offset },
             { $limit: size },
@@ -116,6 +119,7 @@ module.exports = {
 
           number = await Post.countDocuments({
             published,
+            lang,
           });
         }
       }
@@ -125,7 +129,7 @@ module.exports = {
       });
     } catch (error) {
       console.log(error);
-      let { name, description } = PrettyError(error.errors.category.properties);
+      let { name, description } = PrettyError(error.errors);
       return next(new HttpError(name, 500, description));
     }
   },
@@ -145,7 +149,7 @@ module.exports = {
         }).populate("author");
       }
     } catch (error) {
-      let { name, description } = PrettyError(error.errors.category.properties);
+      let { name, description } = PrettyError(error.errors);
       return next(new HttpError(name, 500, description));
     }
     return res.status(200).json({
@@ -161,7 +165,7 @@ module.exports = {
         author: new mongo.ObjectId(idUser),
       });
     } catch (error) {
-      let { name, description } = PrettyError(error.errors.category.properties);
+      let { name, description } = PrettyError(error.errors);
       return next(new HttpError(name, 500, description));
     }
     return res.status(200).json({
@@ -171,16 +175,17 @@ module.exports = {
   },
   update: async (req, res, next) => {
     let { id } = req.query;
-    let { title, poster, resume, content, category, published } = req.body,
+    let { title, poster, resume, content, category, lang, published } =
+        req.body,
       updatedPost;
     try {
       updatedPost = await Post.findOneAndUpdate(
         { _id: new mongo.ObjectId(id) },
-        { title, poster, resume, content, category, published },
+        { title, poster, resume, content, category, published, lang },
         { runValidators: true }
       );
     } catch (error) {
-      let { name, description } = PrettyError(error.errors.category.properties);
+      let { name, description } = PrettyError(error.errors);
       return next(new HttpError(name, 500, description));
     }
     return res.status(200).json({

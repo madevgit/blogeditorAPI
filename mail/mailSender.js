@@ -5,7 +5,7 @@ const { htmlToText } = require("html-to-text");
 const juice = require("juice");
 
 const smtp = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
+  host: "send.one.com",
   port: process.env.SMTP_PORT,
   auth: {
     user: process.env.SMTP_AUTH_USER,
@@ -32,7 +32,6 @@ module.exports = ({
 
     options.html = htmlWithStylesInlined;
     options.text = text;
-    
   }
   smtp
     .sendMail(options)

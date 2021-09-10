@@ -1,5 +1,7 @@
-module.exports = (properties) => {
+module.exports = (errors) => {
+  let properties = errors[Object.keys(errors)[0]]["properties"];
   let { type, path, value, enumValues, message } = properties;
+  
   switch (type) {
     case "required":
       description = `${path} is required`;

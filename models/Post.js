@@ -12,6 +12,7 @@ const PostSchema = new mongoose.Schema(
     poster: { type: String, required: true, trim: true },
     content: { type: String, required: true },
     published: { type: Boolean, required: true },
+    lang: { type: String, enum: ["en", "fr"], required: true },
     author: {
       type: mongoose.SchemaTypes.ObjectId,
       required: true,

@@ -3,7 +3,6 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const passport = require("passport");
 const session = require("express-session");
-
 //Déclarations de constantes Générales
 const publisher = express();
 const Main = require("./dataBase");
@@ -14,8 +13,8 @@ const Suscriber = require("./controllers/suscriber");
 const Auth = require("./auth/auth");
 //Utilisation des intergicielles Généraux
 publisher.use(cors());
-publisher.use(bodyParser.urlencoded({ extended: true }));
-publisher.use(bodyParser.json());
+publisher.use(bodyParser.json({ limit: "5mb" }));
+publisher.use(bodyParser.urlencoded({ extended: true, limit: "5mb" }));
 
 //Défintion de paramètes généraux
 Main(() => {
