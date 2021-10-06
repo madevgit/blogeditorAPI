@@ -9,12 +9,13 @@ const Main = require("./dataBase");
 // const Routes = require('./routes/routes')
 const User = require("./controllers/User");
 const Post = require("./controllers/post");
+const contact = require("./controllers/mail");
 const Suscriber = require("./controllers/suscriber");
 const Auth = require("./auth/auth");
 //Utilisation des intergicielles Généraux
 publisher.use(cors());
-publisher.use(bodyParser.json({ limit: "5mb" }));
-publisher.use(bodyParser.urlencoded({ extended: true, limit: "5mb" }));
+publisher.use(bodyParser.json({ limit: "50mb" }));
+publisher.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
 
 //Défintion de paramètes généraux
 Main(() => {
@@ -50,6 +51,7 @@ Main(() => {
       });
     }
   );
+  publisher.route("/contact").post(contact);
   publisher.route("/login").post(
     passport.authenticate("login", {
       message: "bad password or email please correct and retry",

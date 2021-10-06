@@ -30,8 +30,8 @@ module.exports = {
     let Num = await Subscriber.countDocuments().catch(next);
     for (let i = 0; i < Num; i++) {
       mailSend({
+        from: process.env.SMTP_NEWSLETTER_SENDER,
         to: Subscribers[i].email,
-        from: process.env.SMTP_AUTH_USER,
         subject: post.title,
         template: "index",
         templateVars: {
