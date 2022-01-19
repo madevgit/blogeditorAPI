@@ -1,4 +1,6 @@
 const express = require("express");
+const https = require("https");
+const fs = require("fs");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const passport = require("passport");
@@ -10,10 +12,12 @@ const Main = require("./dataBase");
 const User = require("./controllers/User");
 const Post = require("./controllers/post");
 const contact = require("./controllers/mail");
-const Suscriber = require("./controllers/suscriber");
+const Subscriber = require("./controllers/Subscriber");
 const Auth = require("./auth/auth");
+const compression = require("compression");
 //Utilisation des intergicielles Généraux
 publisher.use(cors());
+publisher.use(compression());
 publisher.use(bodyParser.json({ limit: "50mb" }));
 publisher.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
 
@@ -77,8 +81,11 @@ Main(() => {
     .get(Post.readOne)
     .delete(Post.delete)
     .put(Post.update);
-  publisher.route("/suscribe").delete(Suscriber.delete).post(Suscriber.create);
-  publisher.route("/unsubscribe").all(Suscriber.delete);
+  publisher
+    .route("/suscribe")
+    .delete(Subscriber.delete)
+    .post(Subscriber.create);
+  publisher.route("/unsubscribe").all(Subscriber.delete);
   publisher.use((error, req, res, next) => {
     return res.status(500).json({ reason: error.message, type: error.name });
   });
@@ -89,5 +96,17 @@ Main(() => {
     }
   });
 });
-
-publisher.listen(process.env.PORT);
+https
+  .createServer(
+    {
+      key: fs.readFileSync("ssl/wilccard_qosic.net_private_key.key"),
+      cert: fs.readFileSync("ssl/wilccard_qosic.net_certificate.cer"),
+      ca: fs.readFileSync(
+        "ssl/wilccard_qosic.net_certificate_INTERMEDIATE.cer"
+      ),
+    },
+    publisher
+  )
+  .listen(process.env.PORT, () =>
+    console.log("server started at port", process.env.PORT)
+  );

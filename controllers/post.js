@@ -1,6 +1,6 @@
 const Post = require("../models/Post");
 const mongo = require("mongodb");
-const Subscriber = require("../models/Suscriber");
+const Subscriber = require("../models/Subscriber");
 const HttpError = require("../error/httpError");
 const PrettyError = require("../error/PrettyError");
 const mailSend = require("../mail/mailSender");
@@ -52,9 +52,9 @@ module.exports = {
             cid: "facebook",
           },
           {
-            filename: "twitter.png",
-            path: "./mail/template/images/facebook.png",
-            cid: "twitter",
+            filename: "linkedin.png",
+            path: "./mail/template/images/linkedin.png",
+            cid: "linkedin",
           },
           {
             filename: "poster",
