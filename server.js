@@ -17,6 +17,7 @@ const Auth = require("./auth/auth");
 const compression = require("compression");
 //Utilisation des intergicielles Généraux
 publisher.use(cors());
+publisher.set("trust proxy", 1);
 publisher.use(compression());
 publisher.use(bodyParser.json({ limit: "50mb" }));
 publisher.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
@@ -26,7 +27,7 @@ Main(() => {
   //initialisation de session et du passport
   publisher.use(
     session({
-      resave: true,
+      resave: false,
       saveUninitialized: false,
       secret: process.env.SESSION_SECRET,
       cookie: { secure: false },
