@@ -97,17 +97,6 @@ Main(() => {
     }
   });
 });
-https
-  .createServer(
-    {
-      key: fs.readFileSync("ssl/wilccard_qosic.net_private_key.key"),
-      cert: fs.readFileSync("ssl/wilccard_qosic.net_certificate.cer"),
-      ca: fs.readFileSync(
-        "ssl/wilccard_qosic.net_certificate_INTERMEDIATE.cer"
-      ),
-    },
-    publisher
-  )
-  .listen(process.env.PORT, () =>
-    console.log("server started at port", process.env.PORT)
-  );
+publisher.listen(process.env.PORT, () =>
+  console.log("server started at port", process.env.PORT)
+);
