@@ -10,6 +10,7 @@ module.exports = {
       post;
     let { title, poster, resume, content, category, published, lang } =
       req.body;
+    title = title.toLowerCase();
     try {
       let newPost = new Post({
         title,
@@ -134,7 +135,7 @@ module.exports = {
     }
   },
   readOne: async (req, res, next) => {
-    let { idPost, idUser } = req.query,
+    let { id, idUser } = req.query,
       post;
     try {
       if (idUser) {
@@ -145,8 +146,8 @@ module.exports = {
         ]);
       } else {
         post = await Post.findById({
-          _id: new mongo.ObjectId(idPost),
-        }).populate("author");
+          _id: new mongo.ObjectId(id),
+        });
       }
     } catch (error) {
       let { name, description } = PrettyError(error.errors);
