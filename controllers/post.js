@@ -8,7 +8,7 @@ module.exports = {
   create: async (req, res, next) => {
     let { id } = req.query,
       post;
-    let { title, poster, resume, content, category, published, lang } =
+    let { title, poster, resume, content, category, published, lang, canal } =
       req.body;
     title = title.toLowerCase();
     try {
@@ -19,6 +19,7 @@ module.exports = {
         content,
         category,
         lang,
+        canal,
         author: new mongo.ObjectId(id),
         published,
       });
@@ -27,7 +28,11 @@ module.exports = {
       let { name, description } = PrettyError(error.errors);
       return next(new HttpError(name, 500, description));
     }
-    let Subscribers = await Subscriber.find().catch(next);
+
+    let Subscribers = await Subscriber.find({
+      canal,
+      agreeBlog: true,
+    }).catch(next);
     let Num = await Subscriber.countDocuments().catch(next);
     for (let i = 0; i < Num; i++) {
       mailSend({
@@ -81,6 +86,7 @@ module.exports = {
     const size = parseInt(req.query.limit, 10);
     const published = req.query.published === "true";
     const lang = req.query.lang;
+    const canal = req.query.canal;
     const category =
       req.query.category === "undefined" ? false : req.query.category;
 
@@ -100,7 +106,7 @@ module.exports = {
       } else {
         if (Boolean(category)) {
           posts = await Post.aggregate([
-            { $match: { published, category, lang } },
+            { $match: { published, category, lang, canal } },
             { $sort: { createdAt: -1 } },
             { $skip: offset },
             { $limit: size },
@@ -112,7 +118,7 @@ module.exports = {
           });
         } else {
           posts = await Post.aggregate([
-            { $match: { published, lang } },
+            { $match: { published, lang, canal } },
             { $sort: { createdAt: -1 } },
             { $skip: offset },
             { $limit: size },

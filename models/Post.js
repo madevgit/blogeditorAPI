@@ -13,6 +13,11 @@ const PostSchema = new mongoose.Schema(
     content: { type: String, required: true },
     published: { type: Boolean, required: true },
     lang: { type: String, enum: ["en", "fr"], required: true },
+    canal: {
+      type: String,
+      required: true,
+      enum: ["sendime", "qoswebsite"],
+    },
     author: {
       type: mongoose.SchemaTypes.ObjectId,
       required: true,

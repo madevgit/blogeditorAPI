@@ -1,12 +1,16 @@
 const Subscriber = require("../models/Subscriber");
 module.exports = {
   create: async (req, res, next) => {
-    let email = req.body.email,
-      { type } = req.query;
-    user;
-    let exist = await Subscriber.findOne({ email }).catch(next);
+    let { email, canal, agreeNews, agreeBlog } = req.body;
+    let user;
+    let exist = await Subscriber.findOne({ email, canal }).catch(next);
     if (!exist) {
-      let newSubscriber = new Subscriber({ email, type });
+      let newSubscriber = new Subscriber({
+        email,
+        canal,
+        agreeNews,
+        agreeBlog,
+      });
       user = await newSubscriber.save().catch(next);
     }
     return res.status(200).json({

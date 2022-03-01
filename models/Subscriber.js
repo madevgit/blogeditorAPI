@@ -1,6 +1,18 @@
 const mongoose = require("mongoose");
 const SubscriberSchema = new mongoose.Schema({
   email: { type: String, required: true, index: { unique: true } },
-  type: { type: String, required: true, enum: ["both", "newsletter", "blog"] },
+  canal: {
+    type: String,
+    required: true,
+    enum: ["sendime", "qoswebsite"],
+  },
+  agreeNews: {
+    type: Boolean,
+    default: false,
+  },
+  agreeBlog: {
+    type: Boolean,
+    default: false,
+  },
 });
 module.exports = mongoose.model("Subscriber", SubscriberSchema);
